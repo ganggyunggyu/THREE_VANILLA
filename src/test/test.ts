@@ -1,16 +1,18 @@
 import * as THREE from 'three';
 
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 let camera: THREE.PerspectiveCamera;
 let scene: THREE.Scene;
 let renderer: THREE.WebGLRenderer;
 let controls: PointerLockControls;
+let model: THREE.Object3D | null;
+let raycaster: THREE.Raycaster;
 
 const objects: THREE.Mesh[] = [];
 
-let raycaster: THREE.Raycaster;
-
+let isFirstPerson: boolean = true;
 let moveForward = false;
 let moveBackward = false;
 let moveLeft = false;
@@ -18,6 +20,7 @@ let moveRight = false;
 let canJump = false;
 
 let prevTime = performance.now();
+const loader = new GLTFLoader();
 const velocity = new THREE.Vector3();
 const direction = new THREE.Vector3();
 const vertex = new THREE.Vector3();
@@ -49,6 +52,28 @@ function init() {
   const light = new THREE.HemisphereLight(0xeeeeff, 0x777788, 2.5);
   light.position.set(0.5, 1, 0.75);
   scene.add(light);
+
+  loader.load(
+    '/public/SK_Bird.glb',
+    (gltf) => {
+      model = gltf.scene;
+      console.log(model);
+      model.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh;
+          mesh.castShadow = true;
+        }
+      });
+      model.scale.set(5, 5, 5);
+      model.position.set(0, 10, 0);
+
+      scene.add(model);
+    },
+    undefined,
+    (error) => {
+      console.error('GLTF 모델 로드 실패:', error);
+    }
+  );
 
   controls = new PointerLockControls(camera, document.body);
 
@@ -100,6 +125,9 @@ function init() {
       case 'Space':
         if (canJump === true) velocity.y += 350;
         canJump = false;
+        break;
+      case 'KeyV':
+        toggleView();
         break;
     }
   };
@@ -243,11 +271,44 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+const toggleView = () => {
+  isFirstPerson = !isFirstPerson;
+
+  if (isFirstPerson) {
+    // 1인칭 시점으로 전환
+    if (model) {
+      // 카메라 위치를 모델의 머리 위치로 설정
+      const headOffset = new THREE.Vector3(0, 5, 0); // 모델의 머리 위치에 맞게 조정
+      headOffset.applyQuaternion(camera.quaternion);
+      camera.position.copy(model.position).add(headOffset);
+
+      // PointerLockControls 활성화
+      controls.lock();
+    }
+  } else {
+    // 3인칭 시점으로 전환
+    if (model) {
+      // PointerLockControls 비활성화
+      controls.unlock();
+
+      // 카메라를 모델의 뒤쪽으로 배치
+      const thirdPersonOffset = new THREE.Vector3(0, 5, 10); // 뒤쪽 및 약간 위로
+      thirdPersonOffset.applyQuaternion(camera.quaternion);
+      camera.position.copy(model.position).add(thirdPersonOffset);
+
+      // 카메라가 모델을 바라보도록 설정
+      camera.lookAt(model.position);
+    }
+  }
+};
+
 function animate() {
   const time = performance.now();
 
   if (controls.isLocked === true) {
     raycaster.ray.origin.copy(controls.object.position);
+    if (model) raycaster.ray.origin.copy(model.position);
+
     raycaster.ray.origin.y -= 10;
 
     const intersections = raycaster.intersectObjects(objects, false);
@@ -265,8 +326,13 @@ function animate() {
     direction.x = Number(moveRight) - Number(moveLeft);
     direction.normalize();
 
-    if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
-    if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
+    if (moveForward || moveBackward) {
+      velocity.z -= direction.z * 1000.0 * delta;
+      console.log(velocity.z);
+    }
+    if (moveLeft || moveRight) {
+      velocity.x -= direction.x * 1000.0 * delta;
+    }
 
     if (onObject === true) {
       velocity.y = Math.max(0, velocity.y);
@@ -276,6 +342,23 @@ function animate() {
     controls.moveRight(-velocity.x * delta);
     controls.moveForward(-velocity.z * delta);
 
+    if (isFirstPerson && model) {
+      model.position.copy(controls.object.position);
+    }
+
+    if (!isFirstPerson && model) {
+      // PointerLockControls의 객체 위치 가져오기
+      const cameraPosition = controls.object.position;
+
+      // 3인칭 시점의 오프셋 정의
+      const thirdPersonOffset = new THREE.Vector3(5, 0, 0);
+
+      // cameraPosition과 thirdPersonOffset을 더하여 새로운 위치 계산
+      const targetPosition = cameraPosition.clone().add(thirdPersonOffset);
+
+      // 카메라의 위치를 targetPosition으로 설정
+      model.position.copy(targetPosition);
+    }
     controls.object.position.y += velocity.y * delta;
 
     if (controls.object.position.y < 10) {
