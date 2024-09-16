@@ -26,6 +26,14 @@ const color = new THREE.Color();
 init();
 
 function init() {
+  document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+  <div id="tutorial-overlay">
+    <div id="tutorial-guide">
+      <p style="font-size: 36px">Click to play</p>
+    </div>
+  </div>
+`;
+
   camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -44,28 +52,30 @@ function init() {
 
   controls = new PointerLockControls(camera, document.body);
 
-  const blocker = document.getElementById('blocker') as HTMLDivElement;
-  const instructions = document.getElementById(
-    'instructions'
+  const tutorialOverlay = document.getElementById(
+    'tutorial-overlay'
+  ) as HTMLDivElement;
+  const tutorialGuide = document.getElementById(
+    'tutorial-guide'
   ) as HTMLDivElement;
 
-  instructions.addEventListener('click', function () {
+  tutorialGuide.addEventListener('click', () => {
     controls.lock();
   });
 
-  controls.addEventListener('lock', function () {
-    instructions.style.display = 'none';
-    blocker.style.display = 'none';
+  controls.addEventListener('lock', () => {
+    tutorialGuide.style.display = 'none';
+    tutorialOverlay.style.display = 'none';
   });
 
-  controls.addEventListener('unlock', function () {
-    blocker.style.display = 'block';
-    instructions.style.display = '';
+  controls.addEventListener('unlock', () => {
+    tutorialOverlay.style.display = 'block';
+    tutorialGuide.style.display = '';
   });
-
+  console.log(controls);
   scene.add(controls.object);
 
-  const onKeyDown = function (event: KeyboardEvent) {
+  const onKeyDown = (event: KeyboardEvent) => {
     switch (event.code) {
       case 'ArrowUp':
       case 'KeyW':
@@ -94,7 +104,7 @@ function init() {
     }
   };
 
-  const onKeyUp = function (event: KeyboardEvent) {
+  const onKeyUp = (event: KeyboardEvent) => {
     switch (event.code) {
       case 'ArrowUp':
       case 'KeyW':
