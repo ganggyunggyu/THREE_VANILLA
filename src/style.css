@@ -1,0 +1,243 @@
+/* reset.css */
+/* 
+  철저한 CSS 리셋을 통해 브라우저 간 스타일 차이를 제거하고 
+  일관된 스타일링의 기초를 마련합니다.
+*/
+
+/* 1. 문서 전체 설정 */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+menu,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* 2. HTML5 요소 블록 레벨 설정 */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section {
+  display: block;
+}
+
+/* 3. 본문 설정 */
+body {
+  line-height: 1;
+  font-family: Arial, sans-serif; /* 원하는 기본 폰트로 변경 가능 */
+  background-color: #ffffff; /* 기본 배경색 설정 */
+  color: #000000; /* 기본 텍스트 색상 설정 */
+}
+
+/* 4. 리스트 스타일 제거 */
+menu,
+ol,
+ul {
+  list-style: none;
+}
+
+/* 5. 링크 스타일 제거 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 6. 인라인 요소의 공백 제거 */
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* 7. 테이블 스타일 제거 */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 8. 폼 요소 초기화 */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 9. 버튼 스타일 제거 */
+button {
+  cursor: pointer;
+  background-color: transparent;
+}
+
+/* 10. 이미지 대체 텍스트 제거 */
+img {
+  border: 0;
+  -ms-interpolation-mode: bicubic;
+  vertical-align: middle;
+}
+
+/* 11. 인용 부호 제거 */
+blockquote,
+q {
+  quotes: none;
+}
+
+blockquote::before,
+blockquote::after,
+q::before,
+q::after {
+  content: '';
+  content: none;
+}
+
+/* 12. 테이블 캡션 위치 제거 */
+caption {
+  text-align: left;
+}
+
+/* 13. 폰트 사이징에 box-sizing 추가 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 14. 접근성 향상을 위한 포커스 스타일 */
+:focus {
+  outline: 2px solid #005fcc;
+  outline-offset: 2px;
+}
+
+/* 15. 텍스트 크기 조정 방지 */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+/* 16. 기타 기본 스타일링 초기화 */
+button,
+input,
+select,
+textarea {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+}
+
+/* 17. 기본 줄 높이 설정 */
+body,
+button,
+input,
+select,
+textarea {
+  line-height: 1.5;
+}
